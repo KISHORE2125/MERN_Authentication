@@ -1,108 +1,234 @@
 // src/Pages/Signup.jsx
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Confetti from "react-confetti";
-import AnimatedMascot from "../Components/AnimatedMascot";
-import API from "../api"; // Axios instance
+import API from "../api";
 
-// Gradient background animation
+// --- Mascot Animations ---
+const float = keyframes`
+  0%,100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  25% { transform: translateY(-6px) rotate(-2deg) scale(1.06); }
+  50% { transform: translateY(0px) rotate(2deg) scale(1); }
+  75% { transform: translateY(-6px) rotate(-2deg) scale(1.06); }
+`;
+
+const halo = keyframes`
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
+  50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.35; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
+`;
+
+const sparkle = keyframes`
+  0%,100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.8); opacity: 0.7; }
+`;
+
+const MascotWrapper = styled(motion.div)`
+  font-size: 6rem;
+  position: relative;
+  display: inline-block;
+  animation: ${float} 3.5s ease-in-out infinite;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14rem;
+    height: 14rem;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), rgba(255,255,255,0) 90%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ${halo} 4.5s ease-in-out infinite;
+    z-index: -1;
+  }
+`;
+
+const Spark = styled.div`
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 50%;
+  top: ${(props) => props.top}%;
+  left: ${(props) => props.left}%;
+  animation: ${sparkle} ${(props) => props.duration}s ease-in-out infinite;
+  z-index: -1;
+`;
+
+function PremiumMascot({ focusedField }) {
+  let emoji = "🧑🏻‍💻";
+  if (focusedField === "password") emoji = "🙈";
+  else if (focusedField === "email") emoji = "📧";
+  else if (focusedField === "username") emoji = "🫣";
+
+  const sparks = useMemo(() => {
+    return Array.from({ length: 8 }, () => ({
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      duration: Math.random() * 2.5 + 1.5,
+    }));
+  }, []);
+
+  return (
+    <MascotWrapper
+      key={focusedField}
+      initial={{ scale: 0.85, y: -15, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 450, damping: 20 }}
+    >
+      {emoji}
+      {sparks.map((s, i) => <Spark key={i} {...s} />)}
+    </MascotWrapper>
+  );
+}
+
+// --- Page Animations ---
 const gradientAnimation = keyframes`
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 `;
 
-// Page container
+const particleFloat = keyframes`
+  0% { transform: translate(0,0); opacity: 0.25; }
+  50% { transform: translate(14px,-14px); opacity: 0.1; }
+  100% { transform: translate(0,0); opacity: 0.25; }
+`;
+
+// --- Styled Components ---
 const Container = styled.div`
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
-  background-size: 400% 400%;
-  animation: ${gradientAnimation} 8s ease infinite;
+  background-size: 800% 800%;
+  animation: ${gradientAnimation} 20s ease infinite;
+  overflow: hidden;
   padding: 20px;
 `;
 
-// Glass card container
+const Particle = styled.div`
+  position: absolute;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  top: ${(props) => props.top}%;
+  left: ${(props) => props.left}%;
+  animation: ${particleFloat} ${(props) => props.duration}s ease-in-out infinite;
+  filter: blur(${(props) => props.blur}px);
+  pointer-events: none;
+`;
+
 const Card = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(15px);
-  padding: 50px 35px;
-  border-radius: 25px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(36px) saturate(200%);
+  border-radius: 32px;
+  padding: 55px 45px;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 400px;
+  max-width: 480px;
   align-items: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.32), 0 0 50px rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+              box-shadow 0.35s ease;
+
+  &:hover {
+    transform: rotateY(12deg) rotateX(8deg) translateZ(10px);
+    box-shadow: 0 50px 140px rgba(0,0,0,0.6),
+                0 0 90px rgba(255,255,255,0.2),
+                0 0 120px rgba(255,255,255,0.15);
+  }
 `;
 
-// Input field
+const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  margin-bottom: 18px;
+`;
+
 const Input = styled.input`
   width: 100%;
-  padding: 16px 22px;
-  margin-bottom: 18px;
-  border-radius: 25px;
+  padding: 18px 24px;
+  border-radius: 32px;
   border: none;
   outline: none;
   font-size: 16px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  ::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
+  transition: all 0.2s ease;
+
   &:focus {
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 0 12px rgba(255,255,255,0.35);
+  }
+
+  ::placeholder { 
+    color: rgba(255, 255, 255, 0.75); 
   }
 `;
 
-// Button
+const CursorEdge = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  cursor: text;
+`;
+
+const LeftEdge = styled(CursorEdge)` left: 0; `;
+const RightEdge = styled(CursorEdge)` right: 0; `;
+
 const Button = styled(motion.button)`
   width: 100%;
-  padding: 16px 0;
-  border-radius: 25px;
+  padding: 18px 0;
+  border-radius: 32px;
   border: none;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   color: white;
   background: linear-gradient(135deg, #ff6a00, #ee0979);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 14px 50px rgba(0,0,0,0.42), 0 0 20px rgba(255,255,255,0.25);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    transform: scale(1.1);
+    box-shadow: 0 25px 70px rgba(0,0,0,0.6),
+                0 0 60px #ff6a00,
+                0 0 80px #ee0979,
+                0 0 120px #6a11cb;
   }
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35),
+                0 0 25px #ff6a00,
+                0 0 40px #ee0979;
   }
 `;
 
-// Link wrapper
 const LinkWrapper = styled.div`
   margin-top: 18px;
   font-size: 14px;
   text-align: center;
-  a {
-    color: white;
-    text-decoration: underline;
-    opacity: 0.9;
-    &:hover {
-      opacity: 1;
-    }
-  }
+  a { color: white; text-decoration: underline; opacity: 0.85; &:hover { opacity: 1; } }
 `;
 
-// Error text
 const ErrorText = styled.p`
-  color: #ffcccc;
+  color: #ffb3b3;
   margin-bottom: 10px;
+  text-align: center;
 `;
 
 export default function Signup() {
@@ -116,80 +242,83 @@ export default function Signup() {
   const [error, setError] = useState("");
 
   const handleSignup = async () => {
-    if (!username || !email || !password) {
-      setError("All fields are required!");
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
+    if (!username || !email || !password) { setError("All fields are required!"); return; }
+    setIsLoading(true); setError("");
     try {
-      const res = await API.post("/users/signup", {
-        name: username,
-        email,
-        password,
-      });
-
-      // Save token and username
+      const res = await API.post("/users/signup", { name: username, email, password });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", username);
-
-      // Celebration animation
       setCelebrate(true);
-      setTimeout(() => {
-        setCelebrate(false);
-        navigate("/home");
-      }, 2000);
+      setTimeout(() => { setCelebrate(false); navigate("/home"); }, 1800);
     } catch (err) {
-      setError(
-        err.response?.data?.error || "Signup failed. Please try again."
-      );
-    } finally {
-      setIsLoading(false);
-    }
+      setError(err.response?.data?.error || "Signup failed. Please try again.");
+    } finally { setIsLoading(false); }
   };
+
+  const particles = useMemo(() => {
+    return Array.from({ length: 25 }, () => ({
+      size: Math.random() * 16 + 6,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      duration: Math.random() * 8 + 5,
+      blur: Math.random() * 6 + 1,
+    }));
+  }, []);
 
   return (
     <Container>
-      {celebrate && <Confetti numberOfPieces={250} recycle={false} />}
+      {celebrate && <Confetti numberOfPieces={400} recycle={false} />}
+      {particles.map((p, i) => <Particle key={i} {...p} />)}
       <Card
-        initial={{ opacity: 0, y: -60 }}
+        initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <AnimatedMascot focusedField={focusedField} />
-
+        <PremiumMascot focusedField={focusedField} />
         {error && <ErrorText>{error}</ErrorText>}
 
-        <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onFocus={() => setFocusedField("username")}
-          onBlur={() => setFocusedField("")}
-        />
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onFocus={() => setFocusedField("email")}
-          onBlur={() => setFocusedField("")}
-        />
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onFocus={() => setFocusedField("password")}
-          onBlur={() => setFocusedField("")}
-        />
+        <InputWrapper>
+          <Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onFocus={() => setFocusedField("username")}
+            onBlur={() => setFocusedField("")}
+          />
+          <LeftEdge />
+          <RightEdge />
+        </InputWrapper>
+
+        <InputWrapper>
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onFocus={() => setFocusedField("email")}
+            onBlur={() => setFocusedField("")}
+          />
+          <LeftEdge />
+          <RightEdge />
+        </InputWrapper>
+
+        <InputWrapper>
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onFocus={() => setFocusedField("password")}
+            onBlur={() => setFocusedField("")}
+          />
+          <LeftEdge />
+          <RightEdge />
+        </InputWrapper>
 
         <Button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleSignup}
           disabled={isLoading}
         >

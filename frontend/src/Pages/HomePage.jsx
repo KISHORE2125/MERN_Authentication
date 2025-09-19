@@ -4,15 +4,21 @@ import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
-import AnimatedMascot from "../Components/AnimatedMascot";
 import bgAnimation from "../assets/Animation/Background looping animation.json";
 
-const floatCard = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
+// --- Animations ---
+const gradientText = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 `;
 
+const glowPulse = keyframes`
+  0%, 100% { box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+  50% { box-shadow: 0 0 35px rgba(255,255,255,0.35); }
+`;
+
+// --- Styled Components ---
 const Container = styled.div`
   position: relative;
   min-height: 100vh;
@@ -30,53 +36,73 @@ const BackgroundWrapper = styled.div`
   top: 0;
   left: 0;
   z-index: 0;
+  filter: brightness(1.1);
 `;
 
 const GlassCard = styled(motion.div)`
   position: relative;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 25px;
-  padding: 60px 50px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 40px;
+  padding: 80px 70px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 500px;
+  max-width: 540px;
   width: 90%;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  animation: ${floatCard} 6s ease-in-out infinite;
-  backdrop-filter: blur(14px);
+  box-shadow: 0 35px 120px rgba(0,0,0,0.6), 0 0 80px rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(28px) saturate(200%);
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
+              box-shadow 0.4s ease, border 0.4s ease;
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 50px 140px rgba(0,0,0,0.7),
+                0 0 120px rgba(255,255,255,0.25),
+                0 0 150px rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 3rem;
+  font-size: 3.6rem;
   margin: 15px 0;
   text-align: center;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f8f1e4, #c7b198);
+  font-weight: 900;
+  background: linear-gradient(270deg, #f8f1e4, #c7b198, #ffcc70, #ffeaa0);
+  background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  animation: ${gradientText} 8s ease infinite;
+  text-shadow: 0 6px 25px rgba(0,0,0,0.4);
 `;
 
 const ProductButton = styled(motion.button)`
-  padding: 12px 30px;
-  border-radius: 30px;
+  padding: 16px 40px;
+  border-radius: 40px;
   border: none;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   cursor: pointer;
   color: white;
-  background: linear-gradient(135deg, rgba(106,17,203,0.6), rgba(255,106,0,0.6));
-  backdrop-filter: blur(6px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.45);
-  margin-top: 20px;
+  background: linear-gradient(135deg, rgba(106,17,203,0.85), rgba(255,106,0,0.85));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.2);
+  margin-top: 30px;
+  transition: all 0.3s ease;
+  animation: ${glowPulse} 3s ease-in-out infinite;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.55);
-    filter: brightness(1.15);
+    transform: scale(1.1);
+    box-shadow: 0 18px 55px rgba(0,0,0,0.75), 0 0 50px rgba(255,255,255,0.25);
+    filter: brightness(1.25);
+  }
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.55);
   }
 `;
 
@@ -84,30 +110,28 @@ const LogoutButton = styled(motion.button)`
   position: fixed;
   top: 30px;
   right: 30px;
-  width: 55px;
-  height: 55px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(6px);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: bold;
-  font-size: 1rem;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.45);
-`;
+  font-size: 1.3rem;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.55);
+  transition: all 0.3s ease;
+  animation: ${glowPulse} 3s ease-in-out infinite;
 
-const MascotWrapper = styled.div`
-  position: absolute;
-  right: 8%;
-  bottom: 8%;
-  width: 160px;
-  height: 160px;
-  z-index: 9;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+  &:hover {
+    transform: scale(1.15);
+    box-shadow: 0 22px 60px rgba(0,0,0,0.75);
+    filter: brightness(1.2);
+  }
 `;
 
 export default function HomePage() {
@@ -117,8 +141,7 @@ export default function HomePage() {
   useEffect(() => {
     const savedUser = localStorage.getItem("username");
     if (!savedUser) return navigate("/signin", { replace: true });
-
-    setUsername(savedUser); // ✅ Use localStorage directly
+    setUsername(savedUser);
   }, [navigate]);
 
   const handleLogout = () => {
@@ -136,7 +159,7 @@ export default function HomePage() {
       <LogoutButton onClick={handleLogout}>⏻</LogoutButton>
 
       <GlassCard
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
@@ -145,10 +168,6 @@ export default function HomePage() {
           Go to Products
         </ProductButton>
       </GlassCard>
-
-      <MascotWrapper>
-        <AnimatedMascot focusedField="" />
-      </MascotWrapper>
     </Container>
   );
 }
