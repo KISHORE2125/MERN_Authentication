@@ -137,16 +137,6 @@ const Card = styled(motion.div)`
   box-shadow: 0 30px 90px rgba(0,0,0,0.32), 0 0 50px rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.18);
   position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
-              box-shadow 0.35s ease;
-
-  &:hover {
-    transform: rotateY(12deg) rotateX(8deg) translateZ(10px);
-    box-shadow: 0 50px 140px rgba(0,0,0,0.6),
-                0 0 90px rgba(255,255,255,0.2),
-                0 0 120px rgba(255,255,255,0.15);
-  }
 `;
 
 const InputWrapper = styled.div`
@@ -176,17 +166,6 @@ const Input = styled.input`
   }
 `;
 
-const CursorEdge = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 24px;
-  cursor: text;
-`;
-
-const LeftEdge = styled(CursorEdge)` left: 0; `;
-const RightEdge = styled(CursorEdge)` right: 0; `;
-
 const Button = styled(motion.button)`
   width: 100%;
   padding: 18px 0;
@@ -198,8 +177,6 @@ const Button = styled(motion.button)`
   color: white;
   background: linear-gradient(135deg, #ff6a00, #ee0979);
   box-shadow: 0 14px 50px rgba(0,0,0,0.42), 0 0 20px rgba(255,255,255,0.25);
-  overflow: hidden;
-  position: relative;
   transition: all 0.3s ease;
 
   &:hover {
@@ -212,9 +189,6 @@ const Button = styled(motion.button)`
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35),
-                0 0 25px #ff6a00,
-                0 0 40px #ee0979;
   }
 `;
 
@@ -242,7 +216,10 @@ export default function Signup() {
   const [error, setError] = useState("");
 
   const handleSignup = async () => {
-    if (!username || !email || !password) { setError("All fields are required!"); return; }
+    if (!username || !email || !password) { 
+      setError("All fields are required!"); 
+      return; 
+    }
     setIsLoading(true); setError("");
     try {
       const res = await API.post("/users/signup", { name: username, email, password });
@@ -277,53 +254,52 @@ export default function Signup() {
         <PremiumMascot focusedField={focusedField} />
         {error && <ErrorText>{error}</ErrorText>}
 
-        <InputWrapper>
-          <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            onFocus={() => setFocusedField("username")}
-            onBlur={() => setFocusedField("")}
-          />
-          <LeftEdge />
-          <RightEdge />
-        </InputWrapper>
-
-        <InputWrapper>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onFocus={() => setFocusedField("email")}
-            onBlur={() => setFocusedField("")}
-          />
-          <LeftEdge />
-          <RightEdge />
-        </InputWrapper>
-
-        <InputWrapper>
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onFocus={() => setFocusedField("password")}
-            onBlur={() => setFocusedField("")}
-          />
-          <LeftEdge />
-          <RightEdge />
-        </InputWrapper>
-
-        <Button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={handleSignup}
-          disabled={isLoading}
+        <form 
+          onSubmit={(e) => { e.preventDefault(); handleSignup(); }} 
+          style={{ width: "100%" }}
         >
-          {isLoading ? "Loading..." : "Sign Up"}
-        </Button>
+          <InputWrapper>
+            <Input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onFocus={() => setFocusedField("username")}
+              onBlur={() => setFocusedField("")}
+            />
+          </InputWrapper>
+
+          <InputWrapper>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onFocus={() => setFocusedField("email")}
+              onBlur={() => setFocusedField("")}
+            />
+          </InputWrapper>
+
+          <InputWrapper>
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => setFocusedField("password")}
+              onBlur={() => setFocusedField("")}
+            />
+          </InputWrapper>
+
+          <Button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Sign Up"}
+          </Button>
+        </form>
 
         <LinkWrapper>
           <Link to="/signin">Already have an account? Sign in</Link>

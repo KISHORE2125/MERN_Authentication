@@ -137,19 +137,8 @@ const Card = styled(motion.div)`
   box-shadow: 0 30px 90px rgba(0,0,0,0.32), 0 0 50px rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.18);
   position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
-              box-shadow 0.35s ease;
-
-  &:hover {
-    transform: rotateY(12deg) rotateX(8deg) translateZ(10px);
-    box-shadow: 0 50px 140px rgba(0,0,0,0.6),
-                0 0 90px rgba(255,255,255,0.2),
-                0 0 120px rgba(255,255,255,0.15);
-  }
 `;
 
-// --- Input with edge I-beam ---
 const InputWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -165,7 +154,7 @@ const Input = styled.input`
   font-size: 16px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  cursor: default; /* center default */
+  cursor: default;
   transition: all 0.2s ease;
 
   &:focus {
@@ -183,7 +172,7 @@ const CursorEdge = styled.div`
   top: 0;
   bottom: 0;
   width: 24px;
-  cursor: text; /* I-beam only at edges */
+  cursor: text;
 `;
 
 const LeftEdge = styled(CursorEdge)` left: 0; `;
@@ -200,23 +189,15 @@ const Button = styled(motion.button)`
   color: white;
   background: linear-gradient(135deg, #ff6a00, #ee0979);
   box-shadow: 0 14px 50px rgba(0,0,0,0.42), 0 0 20px rgba(255,255,255,0.25);
-  overflow: hidden;
   position: relative;
   transition: all 0.3s ease;
 
   &:hover {
     transform: scale(1.1);
-    box-shadow: 0 25px 70px rgba(0,0,0,0.6),
-                0 0 60px #ff6a00,
-                0 0 80px #ee0979,
-                0 0 120px #6a11cb;
   }
 
   &:active {
     transform: scale(0.97);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35),
-                0 0 25px #ff6a00,
-                0 0 40px #ee0979;
   }
 `;
 
@@ -278,40 +259,49 @@ export default function Signin() {
         <PremiumMascot focusedField={focusedField} />
         {error && <ErrorText>{error}</ErrorText>}
 
-        <InputWrapper>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onFocus={() => setFocusedField("email")}
-            onBlur={() => setFocusedField("")}
-          />
-          <LeftEdge />
-          <RightEdge />
-        </InputWrapper>
-
-        <InputWrapper>
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onFocus={() => setFocusedField("password")}
-            onBlur={() => setFocusedField("")}
-          />
-          <LeftEdge />
-          <RightEdge />
-        </InputWrapper>
-
-        <Button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={handleSignin}
-          disabled={isLoading}
+        {/* Form wrapper for Enter key */}
+        <form
+          style={{ width: "100%" }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSignin();
+          }}
         >
-          {isLoading ? "Loading..." : "Sign In"}
-        </Button>
+          <InputWrapper>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onFocus={() => setFocusedField("email")}
+              onBlur={() => setFocusedField("")}
+            />
+            <LeftEdge />
+            <RightEdge />
+          </InputWrapper>
+
+          <InputWrapper>
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => setFocusedField("password")}
+              onBlur={() => setFocusedField("")}
+            />
+            <LeftEdge />
+            <RightEdge />
+          </InputWrapper>
+
+          <Button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Sign In"}
+          </Button>
+        </form>
 
         <LinkWrapper>
           <Link to="/signup">Don't have an account? Sign up</Link>
