@@ -40,9 +40,9 @@ const MascotWrapper = styled(motion.div)`
 `;
 
 export default function AnimatedMascot({ focusedField }) {
-  let emoji = "🦊"; // default
+  let emoji = "🧑🏻‍💻"; // default
   if (focusedField === "password") emoji = "🙈";
-  else if (focusedField === "username") emoji = "👀";
+  else if (focusedField === "username") emoji = "🧑🏻‍💻";
   else if (focusedField === "email") emoji = "📧";
 
   return <MascotWrapper>{emoji}</MascotWrapper>;

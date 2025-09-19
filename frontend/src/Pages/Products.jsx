@@ -23,7 +23,7 @@ const Container = styled.div`
   padding: 60px 40px;
   background: linear-gradient(135deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
   background-size: 400% 400%;
-  animation: ${gradientAnimation} 20s ease infinite;
+  animation: ${gradientAnimation} 8s ease infinite;
   display: flex;
   flex-direction: column;
   align-items: center;

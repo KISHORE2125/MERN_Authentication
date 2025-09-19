@@ -22,7 +22,7 @@ const Container = styled.div`
   align-items: center;
   background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
   background-size: 400% 400%;
-  animation: ${gradientAnimation} 15s ease infinite;
+  animation: ${gradientAnimation} 8s ease infinite;
   padding: 20px;
 `;
 

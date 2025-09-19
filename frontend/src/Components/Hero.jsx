@@ -22,7 +22,7 @@ const HeroWrapper = styled.section`
   padding: 40px;
   background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
   background-size: 400% 400%;
-  animation: ${gradientAnimation} 20s ease infinite;
+  animation: ${gradientAnimation} 8s ease infinite;
 `;
 
 // Text container
