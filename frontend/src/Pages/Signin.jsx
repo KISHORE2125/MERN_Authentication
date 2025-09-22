@@ -1,10 +1,9 @@
-// src/Pages/Signin.jsx
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Confetti from "react-confetti";
-import API from "../api";
+import axios from "axios";
 
 // --- Mascot Animations ---
 const float = keyframes`
@@ -13,13 +12,11 @@ const float = keyframes`
   50% { transform: translateY(0px) rotate(2deg) scale(1); }
   75% { transform: translateY(-6px) rotate(-2deg) scale(1.06); }
 `;
-
 const halo = keyframes`
   0% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
   50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.35; }
   100% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
 `;
-
 const sparkle = keyframes`
   0%,100% { transform: scale(1); opacity: 0.2; }
   50% { transform: scale(1.8); opacity: 0.7; }
@@ -91,7 +88,6 @@ const gradientAnimation = keyframes`
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 `;
-
 const particleFloat = keyframes`
   0% { transform: translate(0,0); opacity: 0.25; }
   50% { transform: translate(14px,-14px); opacity: 0.1; }
@@ -162,9 +158,7 @@ const Input = styled.input`
     box-shadow: 0 0 12px rgba(255,255,255,0.35);
   }
 
-  ::placeholder { 
-    color: rgba(255, 255, 255, 0.75); 
-  }
+  ::placeholder { color: rgba(255, 255, 255, 0.75); }
 `;
 
 const CursorEdge = styled.div`
@@ -174,7 +168,6 @@ const CursorEdge = styled.div`
   width: 24px;
   cursor: text;
 `;
-
 const LeftEdge = styled(CursorEdge)` left: 0; `;
 const RightEdge = styled(CursorEdge)` right: 0; `;
 
@@ -192,13 +185,8 @@ const Button = styled(motion.button)`
   position: relative;
   transition: all 0.3s ease;
 
-  &:hover {
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
+  &:hover { transform: scale(1.1); }
+  &:active { transform: scale(0.97); }
 `;
 
 const LinkWrapper = styled.div`
@@ -207,7 +195,6 @@ const LinkWrapper = styled.div`
   text-align: center;
   a { color: white; text-decoration: underline; opacity: 0.85; &:hover { opacity: 1; } }
 `;
-
 const ErrorText = styled.p`
   color: #ffb3b3;
   margin-bottom: 10px;
@@ -227,7 +214,7 @@ export default function Signin() {
     if (!email || !password) { setError("All fields are required!"); return; }
     setIsLoading(true); setError("");
     try {
-      const res = await API.post("/users/signin", { email, password });
+      const res = await axios.post("http://localhost:3001/api/users/signin", { email, password });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", res.data.user.name);
       setCelebrate(true);
@@ -259,14 +246,7 @@ export default function Signin() {
         <PremiumMascot focusedField={focusedField} />
         {error && <ErrorText>{error}</ErrorText>}
 
-        {/* Form wrapper for Enter key */}
-        <form
-          style={{ width: "100%" }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSignin();
-          }}
-        >
+        <form style={{ width: "100%" }} onSubmit={(e) => { e.preventDefault(); handleSignin(); }}>
           <InputWrapper>
             <Input
               type="email"
@@ -293,12 +273,7 @@ export default function Signin() {
             <RightEdge />
           </InputWrapper>
 
-          <Button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.97 }}
-            type="submit"
-            disabled={isLoading}
-          >
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? "Loading..." : "Sign In"}
           </Button>
         </form>

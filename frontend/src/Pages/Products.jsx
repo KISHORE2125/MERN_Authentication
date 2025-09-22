@@ -1,17 +1,16 @@
-// src/Pages/Products.jsx
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
-import { Power } from "lucide-react"; // gold logout icon
+import { Power } from "lucide-react"; // logout icon
 
-// Product images
-import Watch from "../assets/png/Watch.png";
-import Headphones from "../assets/png/Headphones.png";
-import iPhone from "../assets/png/iPhone.png";
-import Samsung from "../assets/png/Samsung.png";
+// --- Import images ---
+import WatchImage from "../assets/png/Watch.png";
+import HeadphonesImage from "../assets/png/Headphones.png";
+import iPhoneImage from "../assets/png/iPhone.png";
+import SamsungImage from "../assets/png/Samsung.png";
 
-// Background gradient animation
+// --- Background gradient animation ---
 const gradientAnimation = keyframes`
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -30,7 +29,6 @@ const Container = styled.div`
   align-items: center;
 `;
 
-// Page Title
 const Title = styled.h1`
   font-size: 4rem;
   margin-bottom: 70px;
@@ -40,10 +38,9 @@ const Title = styled.h1`
   background: linear-gradient(135deg, #ffd700, #ffcc00, #e6b800, #fff8e1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 10px 30px rgba(0,0,0,0.85);
 `;
 
-// Product grid
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -52,7 +49,6 @@ const Grid = styled.div`
   max-width: 1350px;
 `;
 
-// Premium product card
 const ProductCard = styled(motion.div)`
   background: rgba(255, 255, 255, 0.05);
   border-radius: 36px;
@@ -74,7 +70,6 @@ const ProductCard = styled(motion.div)`
   }
 `;
 
-// Product image wrapper
 const ProductImageWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -95,7 +90,6 @@ const ProductImage = styled.img`
   }
 `;
 
-// Product name
 const ProductName = styled.h2`
   font-size: 1.8rem;
   font-weight: 800;
@@ -103,20 +97,18 @@ const ProductName = styled.h2`
   background: linear-gradient(135deg, #ffffff, #ffeeba, #ffd700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 6px 16px rgba(0,0,0,0.7);
 `;
 
-// Product price
 const ProductPrice = styled.p`
   font-size: 1.4rem;
   font-weight: 700;
   background: linear-gradient(135deg, #ffd700, #f0e68c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 4px 12px rgba(0,0,0,0.6);
 `;
 
-// Logout button
 const LogoutButton = styled(motion.button)`
   position: fixed;
   top: 30px;
@@ -126,38 +118,39 @@ const LogoutButton = styled(motion.button)`
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.08);
   backdrop-filter: blur(15px);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffd700;
   font-size: 1.6rem;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7),
-              0 0 40px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.7),
+              0 0 40px rgba(255,215,0,0.3);
   transition: all 0.4s ease;
 
   &:hover {
     transform: scale(1.18);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9),
-                0 0 60px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.9),
+                0 0 60px rgba(255,215,0,0.5);
   }
 `;
 
 export default function Products() {
   const navigate = useNavigate();
 
-  const products = [
-    { id: 1, name: "Luxury Watch", price: "$199", image: Watch },
-    { id: 2, name: "Premium Headphones", price: "$299", image: Headphones },
-    { id: 3, name: "iPhone", price: "$999", image: iPhone },
-    { id: 4, name: "Samsung Galaxy", price: "$899", image: Samsung },
-  ];
+  const [products] = useState([
+    { id: 1, name: "Luxury Watch", price: "$199", image: WatchImage },
+    { id: 2, name: "Premium Headphones", price: "$299", image: HeadphonesImage },
+    { id: 3, name: "iPhone", price: "$999", image: iPhoneImage },
+    { id: 4, name: "Samsung Galaxy", price: "$899", image: SamsungImage },
+  ]);
 
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("token");
     navigate("/signin", { replace: true });
+    setTimeout(() => { window.location.reload(); }, 100);
   };
 
   return (
@@ -169,10 +162,7 @@ export default function Products() {
       <Title>Our Premium Collection</Title>
       <Grid>
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            whileTap={{ scale: 0.95 }}
-          >
+          <ProductCard key={product.id} whileTap={{ scale: 0.95 }}>
             <ProductImageWrapper>
               <ProductImage src={product.image} alt={product.name} />
             </ProductImageWrapper>

@@ -148,6 +148,7 @@ export default function HomePage() {
     localStorage.removeItem("username");
     localStorage.removeItem("token");
     navigate("/signin", { replace: true });
+    setTimeout(() => { window.location.reload(); }, 100);
   };
 
   return (

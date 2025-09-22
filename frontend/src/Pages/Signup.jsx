@@ -1,10 +1,9 @@
-// src/Pages/Signup.jsx
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Confetti from "react-confetti";
-import API from "../api";
+import axios from "axios";
 
 // --- Mascot Animations ---
 const float = keyframes`
@@ -13,13 +12,11 @@ const float = keyframes`
   50% { transform: translateY(0px) rotate(2deg) scale(1); }
   75% { transform: translateY(-6px) rotate(-2deg) scale(1.06); }
 `;
-
 const halo = keyframes`
   0% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
   50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.35; }
   100% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
 `;
-
 const sparkle = keyframes`
   0%,100% { transform: scale(1); opacity: 0.2; }
   50% { transform: scale(1.8); opacity: 0.7; }
@@ -91,7 +88,6 @@ const gradientAnimation = keyframes`
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 `;
-
 const particleFloat = keyframes`
   0% { transform: translate(0,0); opacity: 0.25; }
   50% { transform: translate(14px,-14px); opacity: 0.1; }
@@ -161,9 +157,7 @@ const Input = styled.input`
     box-shadow: 0 0 12px rgba(255,255,255,0.35);
   }
 
-  ::placeholder { 
-    color: rgba(255, 255, 255, 0.75); 
-  }
+  ::placeholder { color: rgba(255, 255, 255, 0.75); }
 `;
 
 const Button = styled(motion.button)`
@@ -187,9 +181,7 @@ const Button = styled(motion.button)`
                 0 0 120px #6a11cb;
   }
 
-  &:active {
-    transform: scale(0.97);
-  }
+  &:active { transform: scale(0.97); }
 `;
 
 const LinkWrapper = styled.div`
@@ -222,7 +214,11 @@ export default function Signup() {
     }
     setIsLoading(true); setError("");
     try {
-      const res = await API.post("/users/signup", { name: username, email, password });
+      const res = await axios.post("http://localhost:3001/api/users/signup", {
+        name: username,
+        email,
+        password
+      });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", username);
       setCelebrate(true);
@@ -291,12 +287,7 @@ export default function Signup() {
             />
           </InputWrapper>
 
-          <Button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.97 }}
-            type="submit"
-            disabled={isLoading}
-          >
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? "Loading..." : "Sign Up"}
           </Button>
         </form>

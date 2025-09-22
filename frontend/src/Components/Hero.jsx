@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import AnimatedMascot from "./AnimatedMascot";
-import API from "../api";
+import axios from "axios";
 
 // --- Animations ---
 const gradientAnimation = keyframes`
@@ -10,18 +10,15 @@ const gradientAnimation = keyframes`
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 `;
-
 const float = keyframes`
   0%,100% { transform: translateY(0px) scale(1); }
   50% { transform: translateY(-18px) scale(1.03); }
 `;
-
 const particleFloat = keyframes`
   0% { transform: translateY(0px) translateX(0px); opacity: 0.7; }
   50% { transform: translateY(-15px) translateX(10px); opacity: 0.3; }
   100% { transform: translateY(0px) translateX(0px); opacity: 0.7; }
 `;
-
 const streakFloat = keyframes`
   0% { transform: translateY(0px); opacity: 0.15; }
   50% { transform: translateY(-40px); opacity: 0.05; }
@@ -50,14 +47,12 @@ const HeroWrapper = styled.section`
     pointer-events: none;
   }
 `;
-
 const TextWrapper = styled(motion.div)`
   max-width: 550px;
   color: white;
   z-index: 3;
   transform-style: preserve-3d;
 `;
-
 const Title = styled(motion.h1)`
   font-size: 4rem;
   font-weight: 900;
@@ -69,7 +64,6 @@ const Title = styled(motion.h1)`
   -webkit-text-fill-color: transparent;
   text-shadow: 0 18px 70px rgba(0,0,0,0.7);
 `;
-
 const Subtitle = styled(motion.p)`
   font-size: 1.5rem;
   margin-bottom: 50px;
@@ -77,13 +71,11 @@ const Subtitle = styled(motion.p)`
   color: rgba(255,255,255,0.95);
   text-shadow: 0 10px 40px rgba(0,0,0,0.5);
 `;
-
 const ButtonGroup = styled.div`
   display: flex;
   gap: 28px;
   flex-wrap: wrap;
 `;
-
 const HeroButton = styled(motion.button)`
   padding: 16px 48px;
   border-radius: 50px;
@@ -103,12 +95,7 @@ const HeroButton = styled(motion.button)`
     box-shadow: 0 32px 130px rgba(0,0,0,0.85), inset 0 -2px 24px rgba(255,255,255,0.35);
     background: linear-gradient(145deg, rgba(255,255,255,0.55), rgba(255,255,255,0.25));
   }
-
-  &:active {
-    transform: scale(0.97);
-    box-shadow: 0 18px 65px rgba(0,0,0,0.55);
-  }
-
+  &:active { transform: scale(0.97); box-shadow: 0 18px 65px rgba(0,0,0,0.55); }
   &::after {
     content: "";
     position: absolute;
@@ -122,18 +109,13 @@ const HeroButton = styled(motion.button)`
     opacity: 0;
     transition: opacity 0.5s ease;
   }
-
-  &:hover::after {
-    opacity: 1;
-  }
+  &:hover::after { opacity: 1; }
 `;
-
 const MascotWrapper = styled(motion.div)`
   animation: ${float} 6s ease-in-out infinite;
   z-index: 2;
   filter: drop-shadow(0 14px 35px rgba(0,0,0,0.55));
 `;
-
 const Particle = styled.div`
   position: absolute;
   width: ${(props) => props.size}px;
@@ -147,7 +129,6 @@ const Particle = styled.div`
   box-shadow: 0 0 8px rgba(255,255,255,0.35);
   pointer-events: none;
 `;
-
 const Streak = styled.div`
   position: absolute;
   width: ${(props) => props.width}px;
@@ -172,7 +153,9 @@ export default function Hero() {
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        const res = await API.get("/hero");
+        const res = await axios.get("http://localhost:3001/api/hero", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+        });
         if (res.data) setHeroData(res.data);
       } catch (err) {
         console.log("Failed to fetch hero data, using default", err);
@@ -203,10 +186,10 @@ export default function Hero() {
   return (
     <HeroWrapper>
       {particles.map((p, i) => (
-        <Particle key={i} size={p.size} top={p.top} left={p.left} duration={p.duration} blur={p.blur} />
+        <Particle key={i} {...p} />
       ))}
       {streaks.map((s, i) => (
-        <Streak key={i} width={s.width} top={s.top} left={s.left} duration={s.duration} />
+        <Streak key={i} {...s} />
       ))}
 
       <TextWrapper style={{ y: yParallax }}>
