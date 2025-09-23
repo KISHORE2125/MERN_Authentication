@@ -193,7 +193,7 @@ export default function Hero() {
     setFadeOut(true);
     setTimeout(() => {
       navigate(route);
-    }, 400); // match fade duration
+    }, 220); // match fade duration (0.22s)
   };
 
   return (
@@ -209,7 +209,7 @@ export default function Hero() {
         style={{ y: yParallax }}
         as={motion.div}
         animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        transition={{ duration: 0.22, ease: "easeInOut" }}
       >
         <Title initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.3 }}>
           {heroData.title}
@@ -242,7 +242,7 @@ export default function Hero() {
         style={{ y: yParallax }}
         as={motion.div}
         animate={{ opacity: fadeOut ? 0 : 1 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        transition={{ duration: 0.22, ease: "easeInOut" }}
       >
         <AnimatedMascot focusedField="" />
       </MascotWrapper>
