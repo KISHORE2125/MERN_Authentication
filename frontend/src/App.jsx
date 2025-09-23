@@ -1,13 +1,14 @@
 // src/App.jsx
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import useAppHooks from "./Hooks/AppHooks";
 
 // Pages & Components
-import Hero from "./Components/Hero";
-import Signin from "./Pages/Signin";
-import Signup from "./Pages/Signup";
-import HomePage from "./Pages/HomePage";
-import Products from "./Pages/Products";
+import Hero from "./Pages/HeroPage.jsx";
+import SignInPage from "./Pages/SignInPage.jsx";
+import SignUpPage from "./Pages/SignUpPage.jsx";
+import HomePage from "./Pages/HomePage.jsx";
+import ProductsPage from "./Pages/ProductsPage.jsx";
 
 // ✅ Protected route wrapper
 function ProtectedRoute({ children }) {
@@ -15,36 +16,16 @@ function ProtectedRoute({ children }) {
   return username ? children : <Navigate to="/signin" replace />;
 }
 
-export default function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleBackspace = (e) => {
-      // Only trigger if not focused on input, textarea, or contenteditable
-      const tag = document.activeElement.tagName;
-      const isEditable = document.activeElement.isContentEditable;
-      if (
-        e.key === "Backspace" &&
-        tag !== "INPUT" &&
-        tag !== "TEXTAREA" &&
-        !isEditable
-      ) {
-        e.preventDefault();
-        navigate(-1);
-      }
-    };
-    window.addEventListener("keydown", handleBackspace);
-    return () => window.removeEventListener("keydown", handleBackspace);
-  }, [navigate]);
-
+function App() {
+  useAppHooks();
   return (
     <Routes>
       {/* Landing page */}
       <Route path="/" element={<Hero />} />
 
       {/* Auth pages */}
-      <Route path="/signin" element={<Signin />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/signin" element={<SignInPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
 
       {/* Protected pages */}
       <Route
@@ -59,7 +40,7 @@ export default function App() {
         path="/products"
         element={
           <ProtectedRoute>
-            <Products />
+            <ProductsPage />
           </ProtectedRoute>
         }
       />
@@ -69,3 +50,5 @@ export default function App() {
     </Routes>
   );
 }
+
+export default App;

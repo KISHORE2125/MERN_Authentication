@@ -1,3 +1,4 @@
+
 import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -6,6 +7,13 @@ import User from "../models/User.js";
 dotenv.config();
 
 const router = express.Router();
+
+// Logout
+router.post("/logout", (req, res) => {
+  // For stateless JWT, logout is handled on the client by removing the token.
+  // Optionally, you can implement token blacklisting here if needed.
+  res.json({ message: "Logged out successfully" });
+});
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });

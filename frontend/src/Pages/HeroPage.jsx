@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import AnimatedMascot from "./AnimatedMascot";
-import axios from "axios";
+import React from "react";
+import useHeroPage from "../Hooks/HeroPageHooks";
+import styled, { keyframes, css } from "styled-components";
+import { motion } from "framer-motion";
+import AnimatedMascot from "../Components/AnimatedMascot";
 
 // --- Animations ---
 const gradientAnimation = keyframes`
@@ -119,90 +118,54 @@ const MascotWrapper = styled(motion.div)`
   z-index: 2;
   filter: drop-shadow(0 14px 35px rgba(0,0,0,0.55));
 `;
-const Particle = styled.div`
+const Particle = styled.div.attrs(props => ({
+  style: {
+    width: `${props.$size}px`,
+    height: `${props.$size}px`,
+    top: `${props.$top}%`,
+    left: `${props.$left}%`,
+    filter: `blur(${props.$blur}px)`
+  }
+}))`
   position: absolute;
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
   background: rgba(255,255,255,0.6);
   border-radius: 50%;
-  top: ${(props) => props.top}%;
-  left: ${(props) => props.left}%;
-  animation: ${particleFloat} ${(props) => props.duration}s ease-in-out infinite;
-  filter: blur(${(props) => props.blur}px);
   box-shadow: 0 0 8px rgba(255,255,255,0.35);
   pointer-events: none;
+  animation: ${(props) => css`${particleFloat} ${props.$duration}s ease-in-out infinite`};
 `;
-const Streak = styled.div`
+const Streak = styled.div.attrs(props => ({
+  style: {
+    width: `${props.$width}px`,
+    top: `${props.$top}%`,
+    left: `${props.$left}%`,
+  }
+}))`
   position: absolute;
-  width: ${(props) => props.width}px;
   height: 2px;
-  top: ${(props) => props.top}%;
-  left: ${(props) => props.left}%;
   background: rgba(255,255,255,0.2);
   filter: blur(3.5px);
-  animation: ${streakFloat} ${(props) => props.duration}s linear infinite;
   pointer-events: none;
+  animation: ${(props) => css`${streakFloat} ${props.$duration}s linear infinite`};
 `;
 
 export default function Hero() {
-  const [heroData, setHeroData] = useState({
-    title: "Welcome to Authentication",
-    subtitle: "Sign in or sign up to get started with your personalized experience!",
-  });
-  const [fadeOut, setFadeOut] = useState(false);
-  const navigate = useNavigate();
-
-  const yMotion = useMotionValue(0);
-  const yParallax = useTransform(yMotion, [0, 500], [0, 45]);
-
-  useEffect(() => {
-    const fetchHero = async () => {
-      try {
-        const res = await axios.get("http://localhost:3001/api/hero", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
-        });
-        if (res.data) setHeroData(res.data);
-      } catch (err) {
-        console.log("Failed to fetch hero data, using default", err);
-      }
-    };
-    fetchHero();
-
-    const handleScroll = () => yMotion.set(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const particles = Array.from({ length: 70 }, (_, i) => ({
-    size: Math.random() * 16 + 3,
-    top: Math.random() * 95,
-    left: Math.random() * 95,
-    duration: Math.random() * 20 + 6,
-    blur: Math.random() * 5 + 0.5,
-  }));
-
-  const streaks = Array.from({ length: 25 }, (_, i) => ({
-    width: Math.random() * 240 + 80,
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    duration: Math.random() * 18 + 8,
-  }));
-
-  // Fade out and navigate helper
-  const handleRoute = (route) => {
-    setFadeOut(true);
-    setTimeout(() => {
-      navigate(route);
-    }, 220); // match fade duration (0.22s)
-  };
+  const {
+    heroData,
+    fadeOut,
+    yParallax,
+    particles,
+    streaks,
+    handleRoute,
+  } = useHeroPage();
 
   return (
     <HeroWrapper>
       {particles.map((p, i) => (
-        <Particle key={i} {...p} />
+        <Particle key={i} $size={p.size} $top={p.top} $left={p.left} $duration={p.duration} $blur={p.blur} />
       ))}
       {streaks.map((s, i) => (
-        <Streak key={i} {...s} />
+        <Streak key={i} $width={s.width} $top={s.top} $left={s.left} $duration={s.duration} />
       ))}
 
       <TextWrapper

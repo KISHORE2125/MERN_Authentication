@@ -1,0 +1,319 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import styled, { keyframes } from "styled-components";
+import Confetti from "react-confetti";
+import useSignInPage from "../Hooks/SignInPageHooks";
+// --- Styled Components ---
+const Container = styled.div`
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
+  background-size: 800% 800%;
+  animation: ${keyframes`
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  `} 20s ease infinite;
+  overflow: hidden;
+  padding: 20px;
+`;
+
+const Particle = styled.div`
+  position: absolute;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  top: ${(props) => props.$top}%;
+  left: ${(props) => props.$left}%;
+  animation: ${keyframes`
+    0% { transform: translate(0,0); opacity: 0.25; }
+    50% { transform: translate(14px,-14px); opacity: 0.1; }
+    100% { transform: translate(0,0); opacity: 0.25; }
+  `} ${(props) => props.$duration}s ease-in-out infinite;
+  filter: blur(${(props) => props.$blur}px);
+  pointer-events: none;
+`;
+
+const Card = styled(motion.div)`
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(36px) saturate(200%);
+  border-radius: 32px;
+  padding: 55px 45px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  align-items: center;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.32), 0 0 50px rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+`;
+
+const Spark = styled.div`
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 50%;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  margin-bottom: 18px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 18px 24px;
+  border-radius: 32px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: background, box-shadow;
+
+  &:focus {
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 0 12px rgba(255,255,255,0.35);
+  }
+
+  ::placeholder { color: rgba(255, 255, 255, 0.75); }
+`;
+
+// --- Mascot Animations ---
+const float = keyframes`
+  0%,100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  25% { transform: translateY(-6px) rotate(-2deg) scale(1.06); }
+  50% { transform: translateY(0px) rotate(2deg) scale(1); }
+  75% { transform: translateY(-6px) rotate(-2deg) scale(1.06); }
+`;
+const halo = keyframes`
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
+  50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.35; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
+`;
+const sparkle = keyframes`
+  0%,100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.8); opacity: 0.7; }
+`;
+
+const MascotWrapper = styled(motion.div)`
+  font-size: 6.2rem;
+  position: relative;
+  display: inline-block;
+  animation: ${float} 3.5s ease-in-out infinite;
+  cursor: default;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  function SignInPage() {
+    const {
+      email,
+      setEmail,
+      password,
+      setPassword,
+      focusedField,
+      setFocusedField,
+      celebrate,
+      isLoading,
+      error,
+      handleSignin,
+      particles,
+      mascot,
+    } = useSignInPage();
+
+    return (
+      <Container>
+        {celebrate && <Confetti numberOfPieces={400} recycle={false} />}
+        {particles.map((p, i) => (
+          <Particle
+            key={i}
+            size={p.size}
+            $top={p.top}
+            $left={p.left}
+            $duration={p.duration}
+            $blur={p.blur}
+          />
+        ))}
+        <Card
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          {(() => {
+            const { emoji, sparks } = mascot(focusedField);
+            return (
+              <MascotWrapper
+                key={focusedField}
+                initial={{ scale: 0.85, y: -15, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 450, damping: 20 }}
+              >
+                {emoji}
+                {sparks.map((s, i) => <Spark key={i} {...s} />)}
+              </MascotWrapper>
+            );
+          })()}
+          {error && <ErrorText>{error}</ErrorText>}
+          <form style={{ width: "100%" }} onSubmit={(e) => { e.preventDefault(); handleSignin(); }}>
+            <InputWrapper>
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setFocusedField("email")}
+                onBlur={() => setFocusedField("")}
+              />
+              {/* Removed LeftEdge and RightEdge, undefined component */}
+            </InputWrapper>
+            <InputWrapper>
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setFocusedField("password")}
+                onBlur={() => setFocusedField("")}
+              />
+              {/* Removed LeftEdge and RightEdge, undefined component */}
+            </InputWrapper>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Loading..." : "Sign In"}
+            </Button>
+          </form>
+          <LinkWrapper>
+            <Link to="/signup">Don't have an account? Sign up</Link>
+          </LinkWrapper>
+        </Card>
+      </Container>
+    );
+  }
+`;
+// Removed undefined CursorEdge styled components
+
+const Button = styled(motion.button)`
+  width: 100%;
+  padding: 18px 0;
+  border-radius: 32px;
+  border: none;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  box-shadow: 0 14px 50px rgba(0,0,0,0.42), 0 0 20px rgba(255,255,255,0.25);
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
+
+  &:hover { transform: scale(1.1); }
+  &:active { transform: scale(0.97); }
+`;
+
+const LinkWrapper = styled.div`
+  margin-top: 18px;
+  font-size: 14px;
+  text-align: center;
+  a { color: white; text-decoration: underline; opacity: 0.85; &:hover { opacity: 1; } }
+`;
+const ErrorText = styled.p`
+  color: #ffb3b3;
+  margin-bottom: 10px;
+  text-align: center;
+`;
+
+function SignInPage() {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    focusedField,
+    setFocusedField,
+    celebrate,
+    isLoading,
+    error,
+    handleSignin,
+    particles,
+    mascot,
+  } = useSignInPage();
+
+  return (
+    <Container>
+      {celebrate && <Confetti numberOfPieces={400} recycle={false} />}
+      {particles.map((p, i) => (
+        <Particle
+          key={i}
+          size={p.size}
+          $top={p.top}
+          $left={p.left}
+          $duration={p.duration}
+          $blur={p.blur}
+        />
+      ))}
+      <Card
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {(() => {
+          const { emoji, sparks } = mascot(focusedField);
+          return (
+            <MascotWrapper
+              key={focusedField}
+              initial={{ scale: 0.85, y: -15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 450, damping: 20 }}
+            >
+              {emoji}
+              {sparks.map((s, i) => <Spark key={i} {...s} />)}
+            </MascotWrapper>
+          );
+        })()}
+        {error && <ErrorText>{error}</ErrorText>}
+        <form style={{ width: "100%" }} onSubmit={(e) => { e.preventDefault(); handleSignin(); }}>
+          <InputWrapper>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onFocus={() => setFocusedField("email")}
+              onBlur={() => setFocusedField("")}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => setFocusedField("password")}
+              onBlur={() => setFocusedField("")}
+            />
+          </InputWrapper>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Loading..." : "Sign In"}
+          </Button>
+        </form>
+        <LinkWrapper>
+          <Link to="/signup">Don't have an account? Sign up</Link>
+        </LinkWrapper>
+      </Card>
+    </Container>
+  );
+}
+// ...existing code...
+
+export default SignInPage;

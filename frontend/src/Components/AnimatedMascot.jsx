@@ -73,28 +73,28 @@
 
   const Particle = styled.div`
     position: absolute;
-    width: ${(props) => props.size}px;
-    height: ${(props) => props.size}px;
+    width: ${(props) => props.$size}px;
+    height: ${(props) => props.$size}px;
     background: rgba(255,255,255,0.6);
     border-radius: 50%;
-    top: ${(props) => props.top}%;
-    left: ${(props) => props.left}%;
-    animation: ${particleFloat} ${(props) => props.duration}s ease-in-out infinite;
-    filter: blur(${(props) => props.blur}px);
+    top: ${(props) => props.$top}%;
+    left: ${(props) => props.$left}%;
+    animation: ${particleFloat} ${(props) => props.$duration}s ease-in-out infinite;
+    filter: blur(${(props) => props.$blur}px);
     pointer-events: none;
     z-index: -1;
   `;
 
   const Spark = styled.div`
     position: absolute;
-    width: ${(props) => props.size}px;
-    height: ${(props) => props.size}px;
+    width: ${(props) => props.$size}px;
+    height: ${(props) => props.$size}px;
     background: rgba(255,255,255,0.8);
     border-radius: 50%;
-    top: ${(props) => props.top}%;
-    left: ${(props) => props.left}%;
+    top: ${(props) => props.$top}%;
+    left: ${(props) => props.$left}%;
     filter: blur(1.5px);
-    animation: ${sparkle} ${(props) => props.duration}s ease-in-out infinite;
+    animation: ${sparkle} ${(props) => props.$duration}s ease-in-out infinite;
     z-index: -1;
   `;
 
@@ -137,10 +137,10 @@
     return (
       <MascotWrapper style={{ rotateX: mouseY, rotateY: -mouseX }}>
         {particles.map((p, i) => (
-          <Particle key={i} {...p} />
+          <Particle key={i} $size={p.size} $top={p.top} $left={p.left} $duration={p.duration} $blur={p.blur} />
         ))}
         {sparks.map((s, i) => (
-          <Spark key={i} {...s} />
+          <Spark key={i} $size={s.size} $top={s.top} $left={s.left} $duration={s.duration} />
         ))}
         {emoji}
       </MascotWrapper>

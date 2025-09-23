@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import useProductsPage from "../Hooks/ProductsPageHooks";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import { Power } from "lucide-react"; // logout icon
@@ -140,21 +140,7 @@ const LogoutButton = styled(motion.button)`
 `;
 
 export default function Products() {
-  const navigate = useNavigate();
-
-  const [products] = useState([
-    { id: 1, name: "Luxury Watch", price: "$199", image: WatchImage },
-    { id: 2, name: "Premium Headphones", price: "$299", image: HeadphonesImage },
-    { id: 3, name: "iPhone", price: "$999", image: iPhoneImage },
-    { id: 4, name: "Samsung Galaxy", price: "$899", image: SamsungImage },
-  ]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
-    navigate("/signin", { replace: true });
-    setTimeout(() => { window.location.reload(); }, 100);
-  };
+  const { products, handleLogout } = useProductsPage();
 
   return (
     <Container>

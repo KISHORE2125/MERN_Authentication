@@ -1,6 +1,6 @@
 // src/Pages/HomePage.jsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import useHomePage from "../Hooks/HomepageHooks";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
@@ -137,21 +137,7 @@ const LogoutButton = styled(motion.button)`
 `;
 
 export default function HomePage() {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("Friend");
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("username");
-    if (!savedUser) return navigate("/signin", { replace: true });
-    setUsername(savedUser);
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
-    navigate("/signin", { replace: true });
-    setTimeout(() => { window.location.reload(); }, 100);
-  };
+  const { username, handleLogout, handleGoToProducts } = useHomePage();
 
   return (
     <Container>
@@ -167,7 +153,7 @@ export default function HomePage() {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <Title>Welcome, {username}!</Title>
-        <ProductButton onClick={() => navigate("/products")}>
+        <ProductButton onClick={handleGoToProducts}>
           Go to Products
         </ProductButton>
       </GlassCard>
