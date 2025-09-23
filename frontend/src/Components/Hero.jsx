@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import AnimatedMascot from "./AnimatedMascot";
@@ -88,7 +89,8 @@ const HeroButton = styled(motion.button)`
   backdrop-filter: blur(20px);
   box-shadow: 0 22px 90px rgba(0,0,0,0.65), inset 0 -2px 18px rgba(255,255,255,0.25);
   position: relative;
-  transition: all 0.5s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow, background;
 
   &:hover {
     transform: scale(1.18);
@@ -107,7 +109,8 @@ const HeroButton = styled(motion.button)`
     background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
     filter: blur(28px);
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity;
   }
   &:hover::after { opacity: 1; }
 `;
@@ -146,6 +149,8 @@ export default function Hero() {
     title: "Welcome to Authentication",
     subtitle: "Sign in or sign up to get started with your personalized experience!",
   });
+  const [fadeOut, setFadeOut] = useState(false);
+  const navigate = useNavigate();
 
   const yMotion = useMotionValue(0);
   const yParallax = useTransform(yMotion, [0, 500], [0, 45]);
@@ -183,6 +188,14 @@ export default function Hero() {
     duration: Math.random() * 18 + 8,
   }));
 
+  // Fade out and navigate helper
+  const handleRoute = (route) => {
+    setFadeOut(true);
+    setTimeout(() => {
+      navigate(route);
+    }, 400); // match fade duration
+  };
+
   return (
     <HeroWrapper>
       {particles.map((p, i) => (
@@ -192,7 +205,12 @@ export default function Hero() {
         <Streak key={i} {...s} />
       ))}
 
-      <TextWrapper style={{ y: yParallax }}>
+      <TextWrapper
+        style={{ y: yParallax }}
+        as={motion.div}
+        animate={{ opacity: fadeOut ? 0 : 1 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+      >
         <Title initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.3 }}>
           {heroData.title}
         </Title>
@@ -201,16 +219,31 @@ export default function Hero() {
         </Subtitle>
 
         <ButtonGroup>
-          <HeroButton whileHover={{ scale: 1.18 }} whileTap={{ scale: 0.97 }} onClick={() => (window.location.href = "/signin")}>
+          <HeroButton
+            whileHover={{ scale: 1.18 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => handleRoute("/signin")}
+            disabled={fadeOut}
+          >
             Sign In
           </HeroButton>
-          <HeroButton whileHover={{ scale: 1.18 }} whileTap={{ scale: 0.97 }} onClick={() => (window.location.href = "/signup")}>
+          <HeroButton
+            whileHover={{ scale: 1.18 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => handleRoute("/signup")}
+            disabled={fadeOut}
+          >
             Sign Up
           </HeroButton>
         </ButtonGroup>
       </TextWrapper>
 
-      <MascotWrapper style={{ y: yParallax }}>
+      <MascotWrapper
+        style={{ y: yParallax }}
+        as={motion.div}
+        animate={{ opacity: fadeOut ? 0 : 1 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+      >
         <AnimatedMascot focusedField="" />
       </MascotWrapper>
     </HeroWrapper>

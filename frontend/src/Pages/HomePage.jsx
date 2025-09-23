@@ -54,8 +54,8 @@ const GlassCard = styled(motion.div)`
   border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(28px) saturate(200%);
   transform-style: preserve-3d;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
-              box-shadow 0.4s ease, border 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow, border;
 
   &:hover {
     transform: translateY(-8px) scale(1.02);
@@ -91,7 +91,8 @@ const ProductButton = styled(motion.button)`
   backdrop-filter: blur(10px);
   box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.2);
   margin-top: 30px;
-  transition: all 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
   animation: ${glowPulse} 3s ease-in-out infinite;
 
   &:hover {
@@ -124,7 +125,8 @@ const LogoutButton = styled(motion.button)`
   font-weight: bold;
   font-size: 1.3rem;
   box-shadow: 0 15px 40px rgba(0,0,0,0.55);
-  transition: all 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
   animation: ${glowPulse} 3s ease-in-out infinite;
 
   &:hover {

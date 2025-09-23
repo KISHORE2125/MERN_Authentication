@@ -59,7 +59,8 @@ const ProductCard = styled(motion.div)`
   box-shadow: 0 25px 90px rgba(0, 0, 0, 0.8),
               inset 0 0 30px rgba(255, 215, 0, 0.08);
   cursor: pointer;
-  transition: all 0.5s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow, border;
 
   &:hover {
     transform: translateY(-20px) scale(1.06);
@@ -83,7 +84,8 @@ const ProductImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: transform 0.6s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 
   ${ProductCard}:hover & {
     transform: scale(1.12);
@@ -127,7 +129,8 @@ const LogoutButton = styled(motion.button)`
   font-size: 1.6rem;
   box-shadow: 0 15px 50px rgba(0,0,0,0.7),
               0 0 40px rgba(255,215,0,0.3);
-  transition: all 0.4s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
 
   &:hover {
     transform: scale(1.18);

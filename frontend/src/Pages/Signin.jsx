@@ -151,7 +151,8 @@ const Input = styled.input`
   background: rgba(255, 255, 255, 0.2);
   color: white;
   cursor: default;
-  transition: all 0.2s ease;
+  transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: background, box-shadow;
 
   &:focus {
     background: rgba(255,255,255,0.25);
@@ -183,7 +184,8 @@ const Button = styled(motion.button)`
   background: linear-gradient(135deg, #ff6a00, #ee0979);
   box-shadow: 0 14px 50px rgba(0,0,0,0.42), 0 0 20px rgba(255,255,255,0.25);
   position: relative;
-  transition: all 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
 
   &:hover { transform: scale(1.1); }
   &:active { transform: scale(0.97); }
